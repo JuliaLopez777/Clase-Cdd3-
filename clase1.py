@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm, chi2, stats
 from sklearn.model_selection import train_test_split
+from scipy.stats import gaussian_kde
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import random
@@ -351,8 +352,8 @@ class RegresionLogistica(Regresion):
         plt.figure(figsize=(8, 6))
         plt.plot(fpr, tpr, label=f'Curva ROC (AUC = {auc_valor:.2f})')
         plt.plot([0, 1], [0, 1], linestyle='--', color='gray')
-        plt.xlabel('Tasa de Falsos Positivos')
-        plt.ylabel('Tasa de Verdaderos Positivos')
+        plt.xlabel('Falsos Positivos')
+        plt.ylabel('Verdaderos Positivos')
         plt.title('Curva ROC')
         plt.legend()
         plt.grid(True)
@@ -366,6 +367,83 @@ class RegresionLogistica(Regresion):
         """
         return self.resultados.summary()
 
+#--------------------------------GENERADOR DE DATOS--------------------------------
+class GeneradorDatos:
+    """
+    Clase para generar datos con distintas distribuciones y estimar sus densidades.
+    Soporta:
+    - Distribución Normal
+    - Distribución Bart Simpson (BS)
+    """
+
+    def __init__(self, N=1000):
+        """
+        atributos = N (tamanio de la muestra)
+        Inicializa la clase con el número de datos a generar.
+        """
+        self.N = N
+        self.datos_normal = None
+        self.datos_bart_simpson = None
+
+    def generar_normal(self, media=0, desviacion=1):
+        """Genera datos con distribución normal."""
+        self.datos_normal = np.random.normal(media, desviacion, size=self.N)
+        return self.datos_normal
+
+    def generar_bart_simpson(self):
+        """
+        Genera datos con distribución Bart Simpson (BS).
+        """
+        u = np.random.uniform(size=self.N)
+        datos_bs = u.copy()
+
+        ind = np.where(u > 0.5)[0]
+        datos_bs[ind] = np.random.normal(0, 1, size=len(ind))
+
+        for j in range(5):
+            ind = np.where((u > j * 0.1) & (u <= (j + 1) * 0.1))[0]
+            datos_bs[ind] = np.random.normal(j / 2 - 1, 0.1, size=len(ind))
+
+        self.datos_bart_simpson = datos_bs
+        return datos_bs
+
+    def densidad_normal(self, graficar=True):
+        """Estima y grafica la densidad de los datos normales generados."""
+        if self.datos_normal is None:
+            raise ValueError("Primero se deben generar los datos.")
+        kde = gaussian_kde(self.datos_normal)
+        x = np.linspace(min(self.datos_normal), max(self.datos_normal), 1000)
+        y = kde(x)
+
+        if graficar:
+            plt.plot(x, y, label="Densidad Normal")
+            plt.title("Estimación de Densidad - Normal")
+            plt.xlabel("Valor")
+            plt.ylabel("Densidad")
+            plt.grid(True)
+            plt.legend()
+            plt.show()
+
+        return x, y
+
+    def densidad_bart_simpson(self, graficar=True):
+        """Estima y grafica la densidad de los datos Bart Simpson (BS)generados."""
+        if self.datos_bart_simpson is None:
+            raise ValueError("Primero debe generar los datos BS.")
+        kde = gaussian_kde(self.datos_bart_simpson)
+        x = np.linspace(min(self.datos_bart_simpson), max(self.datos_bart_simpson), 1000)
+        y = kde(x)
+
+        if graficar:
+            plt.plot(x, y, label="Densidad Bart Simpson", color='orange')
+            plt.title("Estimación de Densidad - Bart Simpson")
+            plt.xlabel("Valor")
+            plt.ylabel("Densidad")
+            plt.grid(True)
+            plt.legend()
+            plt.show()
+
+        return x, y
 # -------------------------------PARTE CUALITATIVAS (CHI CUADRADO)-------------------------------------------
 class Cualitativas:
     """
