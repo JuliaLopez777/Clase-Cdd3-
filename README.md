@@ -1,6 +1,6 @@
 # Módulo de Herramientas Estadísticas
 
-Este módulo contiene una colección de clases en Python para realizar análisis estadísticos clásicos como:
+Este módulo contiene una colección de clases en Python para realizar análisis estadísticos como:
 
 - Estimación de densidades (histogramas y núcleos)
 - Regresiones lineales y logísticas
