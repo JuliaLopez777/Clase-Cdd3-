@@ -279,6 +279,14 @@ class RegresionLogistica(Regresion):
         self.resultados = self.modelo.fit()
         return self.resultados
 
+    def coeficientes(self):
+        """
+        Devuelve los coeficientes del modelo ajustado.
+        """
+        self.beta0 = self.resultados.params[0]
+        self.beta1 = self.resultados.params[1]
+        return self.beta0, self.beta1
+
     def predecir(self, x_nuevo, umbral=0.5):
         """
         Realiza predicciones de probabilidad con nuevos valores de x.
@@ -364,8 +372,12 @@ class RegresionLogistica(Regresion):
     def resumen(self):
         """
         Muestra el resumen estadístico del modelo ajustado.
+        retorna tambien t observado, p valor y el error estandar
         """
-        return self.resultados.summary()
+        self.t_observado = self.resultados.tvalues[1]
+        self.p_valor = self.resultados.pvalues[1]
+        self.error_estandar = self.resultados.bse[1]
+        return self.resultados.summary(), self.t_observado, self.p_valor, self.error_estandar
 
 #--------------------------------GENERADOR DE DATOS--------------------------------
 class GeneradorDatos:
