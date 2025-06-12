@@ -29,6 +29,7 @@ Implementa regresión logística binaria(o y 1). Permite:
 - Ajustar modelos logísticos
 - Predecir clases y probabilidades
 - Generar matriz de confusión, sensibilidad, especificidad y curva ROC con AUC
+- Permite obtener un resumen donde resultan los coeficientes, errores estandar, t obs y pvalor
 
 ### Cualitativas
 Clase diseñada para realizar pruebas de bondad de ajuste usando el test chi cuadrado.
